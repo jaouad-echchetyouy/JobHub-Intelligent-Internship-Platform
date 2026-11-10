@@ -1,0 +1,24 @@
+{% extends "auth.html" %}
+{% block title %}Créer un compte{% endblock %}
+{% block form %}
+<h2>Créer ton compte</h2>
+<p class="muted">Dis-nous ce que tu sais faire, on s'occupe du reste.</p>
+{% if error %}<div class="alert err">{{ error }}</div>{% endif %}
+<form method="post" action="/register" class="form">
+  <label>Nom complet<input class="input" name="full_name" value="{{ form.full_name or '' }}" required autofocus autocomplete="name"></label>
+  <label>Email<input class="input" type="email" name="email" value="{{ form.email or '' }}" required autocomplete="email"></label>
+  <div class="two">
+    <label>Mot de passe<input class="input" type="password" name="password" minlength="8" required autocomplete="new-password"></label>
+    <label>Confirmation<input class="input" type="password" name="confirm" minlength="8" required autocomplete="new-password"></label>
+  </div>
+  <label>Tes compétences <small class="muted">(séparées par des virgules)</small>
+    <input class="input" id="skills-input" name="skills" value="{{ form.skills or '' }}" placeholder="python, sql, react">
+  </label>
+  <div class="chips" data-target="skills-input">
+    {% for s in suggestions %}<button type="button" class="chip">{{ s }}</button>{% endfor %}
+  </div>
+  <button class="btn primary block" type="submit">Créer mon compte</button>
+</form>
+<p class="muted center">Déjà inscrit ? <a href="/login">Se connecter</a></p>
+<script src="/static/js/app.js"></script>
+{% endblock %}

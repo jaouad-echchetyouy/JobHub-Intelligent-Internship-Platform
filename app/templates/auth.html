@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}Connexion{% endblock %} · JobHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body>
+<div class="auth">
+  <section class="auth-hero">
+    <a class="brand" href="/"><span class="brand-mark">J</span><span class="brand-name">JobHub</span></a>
+    <div>
+      <h1>Trouve ton prochain stage sans chercher partout.</h1>
+      <p>JobHub parcourt plusieurs sites d'offres, repère les nouvelles annonces et te prévient quand l'une d'elles correspond à tes compétences.</p>
+      <ul class="hero-points">
+        <li><b>Score de correspondance</b> pour chaque offre, avec les compétences à acquérir.</li>
+        <li><b>Alertes email</b> uniquement pour les offres au-dessus de ton seuil.</li>
+        <li><b>Assistant carrière</b> pour préparer CV et candidatures.</li>
+      </ul>
+    </div>
+    <small>Projet étudiant · FastAPI & SQLite</small>
+  </section>
+  <section class="auth-form">
+    <div class="auth-box">{% block form %}{% endblock %}</div>
+  </section>
+</div>
+</body>
+</html>

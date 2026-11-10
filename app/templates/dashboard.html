@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Tableau de bord{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Bonjour {{ user.first_name }}</h1>
+    <p class="muted">Voici l'état du marché des stages aujourd'hui.</p>
+  </div>
+  {% if user.is_admin %}
+  <div class="actions">
+    <button class="btn" id="btn-demo" type="button">Charger la démo</button>
+    <button class="btn primary" id="btn-scrape" type="button">{{ icon('refresh') }}Lancer le scraping</button>
+  </div>
+  {% endif %}
+</header>
+
+{% if not user.skill_list %}
+<div class="alert info">Ton profil est vide, donc les scores restent bas. <a href="/profile">Ajoute tes compétences</a> pour obtenir des recommandations utiles.</div>
+{% endif %}
+
+<section class="kpis">
+  <div class="kpi"><span>Offres en base</span><b>{{ stats.kpis.total }}</b></div>
+  <div class="kpi"><span>Nouvelles (24 h)</span><b>{{ stats.kpis.new24 }}</b></div>
+  <div class="kpi"><span>Sauvegardées</span><b>{{ stats.kpis.saved }}</b></div>
+  <div class="kpi accent"><span>Score moyen (top 10)</span><b>{{ stats.kpis.avg }}<small>%</small></b></div>
+</section>
+
+{% if stats.kpis.total == 0 %}
+<div class="empty card">
+  <h3>Aucune offre pour l'instant</h3>
+  <p class="muted">Lance le scraping pour récupérer de vraies offres, ou charge les offres de démonstration pour tester l'interface.</p>
+</div>
+{% else %}
+<section class="grid-3">
+  <article class="card span-2"><h3>Nouvelles offres par jour</h3><div class="chart"><canvas id="c-day"></canvas></div></article>
+  <article class="card"><h3>Par type</h3><div class="chart"><canvas id="c-type"></canvas></div></article>
+  <article class="card"><h3>Par source</h3><div class="chart"><canvas id="c-source"></canvas></div></article>
+  <article class="card span-2"><h3>Compétences les plus demandées</h3><div class="chart"><canvas id="c-skills"></canvas></div></article>
+</section>
+
+<section class="card">
+  <div class="card-head"><h3>Tes meilleures correspondances</h3><a href="/recommendations">Tout voir</a></div>
+  <ul class="rows">
+    {% for o in top %}
+    <li>
+      <span class="score" data-s="{{ o.score }}">{{ o.score }}%</span>
+      <div class="grow"><b>{{ o.title }}</b><small class="muted">{{ o.company }}{% if o.location %} · {{ o.location }}{% endif %}</small></div>
+      <span class="badge">{{ o.type }}</span>
+      <a class="btn sm" href="{{ o.url }}" target="_blank" rel="noopener">Postuler</a>
+    </li>
+    {% endfor %}
+  </ul>
+</section>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if stats.kpis.total %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const STATS = {{ stats | tojson }};
+const css = getComputedStyle(document.documentElement);
+const C = {primary: css.getPropertyValue('--primary').trim(), text: css.getPropertyValue('--muted').trim(), grid: css.getPropertyValue('--border').trim()};
+const palette = ['#6c47ff', '#12a37f', '#e8890c', '#3b82f6', '#e5484d', '#a78bfa'];
+Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
+Chart.defaults.color = C.text;
+const base = {responsive: true, maintainAspectRatio: false, plugins: {legend: {display: false}}};
+const axes = {x: {grid: {display: false}}, y: {grid: {color: C.grid}, beginAtZero: true, ticks: {precision: 0}}};
+
+new Chart(document.getElementById('c-day'), {type: 'line', data: {labels: STATS.per_day.labels, datasets: [{data: STATS.per_day.values, borderColor: C.primary, backgroundColor: C.primary + '22', fill: true, tension: .35, pointRadius: 2}]}, options: {...base, scales: axes}});
+new Chart(document.getElementById('c-type'), {type: 'doughnut', data: {labels: Object.keys(STATS.by_type), datasets: [{data: Object.values(STATS.by_type), backgroundColor: palette, borderWidth: 0}]}, options: {...base, cutout: '65%', plugins: {legend: {display: true, position: 'bottom'}}}});
+new Chart(document.getElementById('c-source'), {type: 'bar', data: {labels: Object.keys(STATS.by_source), datasets: [{data: Object.values(STATS.by_source), backgroundColor: C.primary, borderRadius: 6}]}, options: {...base, scales: axes}});
+new Chart(document.getElementById('c-skills'), {type: 'bar', data: {labels: STATS.top_skills.labels, datasets: [{data: STATS.top_skills.values, backgroundColor: C.primary, borderRadius: 6}]}, options: {...base, indexAxis: 'y', scales: {x: axes.y, y: axes.x}}});
+</script>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,39 @@
+{% from "_icons.html" import icon %}
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}JobHub{% endblock %} · JobHub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script>try{var t=localStorage.getItem('theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <a class="brand" href="/dashboard"><span class="brand-mark">J</span><span class="brand-name">JobHub</span></a>
+    <nav class="nav">
+      <a href="/dashboard" class="{{ 'on' if active == 'dashboard' }}">{{ icon('grid') }}<span>Tableau de bord</span></a>
+      <a href="/recommendations" class="{{ 'on' if active == 'recommendations' }}">{{ icon('spark') }}<span>Pour moi</span></a>
+      <a href="/offers" class="{{ 'on' if active == 'offers' }}">{{ icon('list') }}<span>Toutes les offres</span></a>
+      <a href="/offers?saved=1" class="{{ 'on' if active == 'saved' }}">{{ icon('bookmark') }}<span>Sauvegardées</span></a>
+      <a href="/chat" class="{{ 'on' if active == 'chat' }}">{{ icon('chat') }}<span>Assistant carrière</span></a>
+      <a href="/profile" class="{{ 'on' if active == 'profile' }}">{{ icon('user') }}<span>Mon profil</span></a>
+    </nav>
+    <div class="side-foot">
+      <button class="nav-btn" id="theme-toggle" type="button">{{ icon('moon') }}<span>Mode sombre</span></button>
+      <a class="nav-btn" href="/logout">{{ icon('logout') }}<span>Se déconnecter</span></a>
+      <div class="me"><span class="avatar">{{ user.initials }}</span>
+        <div><b>{{ user.full_name }}</b><small>{{ 'Administrateur' if user.is_admin else 'Étudiant' }}</small></div></div>
+    </div>
+  </aside>
+  <main class="main">{% block content %}{% endblock %}</main>
+</div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+<script src="/static/js/app.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,13 @@
+{% extends "auth.html" %}
+{% block title %}Connexion{% endblock %}
+{% block form %}
+<h2>Bon retour</h2>
+<p class="muted">Connecte-toi pour voir tes recommandations.</p>
+{% if error %}<div class="alert err">{{ error }}</div>{% endif %}
+<form method="post" action="/login" class="form">
+  <label>Email<input class="input" type="email" name="email" value="{{ email }}" required autofocus autocomplete="email"></label>
+  <label>Mot de passe<input class="input" type="password" name="password" required autocomplete="current-password"></label>
+  <button class="btn primary block" type="submit">Se connecter</button>
+</form>
+<p class="muted center">Pas encore de compte ? <a href="/register">Créer un compte</a></p>
+{% endblock %}

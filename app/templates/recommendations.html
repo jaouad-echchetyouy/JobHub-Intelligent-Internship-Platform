@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Recommandations{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>Offres recommandées</h1>
+    <p class="muted" id="reco-sub">Sélection personnalisée selon ton profil.</p>
+  </div>
+  <div class="filters-inline">
+    <div class="search">{{ icon('search') }}<input id="f-q" class="input" placeholder="Titre, entreprise, compétence"></div>
+    <select id="f-type" class="input"><option value="">Tous les types</option><option>Internship</option><option>Job</option><option>Hackathon</option></select>
+    <select id="f-mode" class="input"><option value="">Tous les modes</option><option>Remote</option><option>Hybrid</option><option>On-site</option></select>
+  </div>
+</header>
+<div id="no-profile" class="alert info" hidden>Ton profil ne contient aucune compétence. <a href="/profile">Complète-le</a> pour des scores plus justes.</div>
+<section class="split">
+  <div class="reco-list" id="reco-list" role="listbox" aria-label="Offres"></div>
+  <article class="reco-detail card" id="reco-detail"><p class="muted">Chargement…</p></article>
+</section>
+{% endblock %}
+{% block scripts %}<script src="/static/js/recos.js"></script>{% endblock %}

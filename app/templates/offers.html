@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}{{ 'Sauvegardées' if only_saved else 'Toutes les offres' }}{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div>
+    <h1>{{ 'Offres sauvegardées' if only_saved else 'Toutes les offres' }}</h1>
+    <p class="muted">{{ total }} offre{{ 's' if total != 1 }} trouvée{{ 's' if total != 1 }}</p>
+  </div>
+</header>
+<form class="offers-layout" method="get" action="/offers" id="filter-form">
+  {% if only_saved %}<input type="hidden" name="saved" value="1">{% endif %}
+  <aside class="filters card">
+    <div class="card-head"><h3>Filtres</h3><a href="{{ '/offers?saved=1' if only_saved else '/offers' }}">Effacer</a></div>
+    <div class="search">{{ icon('search') }}<input class="input" name="q" value="{{ q }}" placeholder="Rechercher"></div>
+    <fieldset><legend>Type</legend>
+      {% for t, label in [('Internship','Stages'),('Job','Emplois'),('Hackathon','Hackathons')] %}
+      <label class="check"><input type="checkbox" name="type" value="{{ t }}" {{ 'checked' if t in types }}>{{ label }}</label>{% endfor %}
+    </fieldset>
+    <fieldset><legend>Mode de travail</legend>
+      {% for m, label in [('Remote','À distance'),('Hybrid','Hybride'),('On-site','Sur site')] %}
+      <label class="check"><input type="checkbox" name="mode" value="{{ m }}" {{ 'checked' if m in modes }}>{{ label }}</label>{% endfor %}
+    </fieldset>
+    <button class="btn primary block" type="submit">Appliquer</button>
+  </aside>
+  <div>
+    {% if offers %}
+    <div class="cards">
+      {% for o in offers %}
+      <article class="offer card">
+        <div class="offer-top">
+          <div><h3>{{ o.title }}</h3><small class="muted">{{ o.company }}</small></div>
+          <span class="badge t-{{ o.type|lower }}">{{ o.type }}</span>
+        </div>
+        <div class="meta">
+          <span class="badge m-{{ o.mode|lower }}">{{ o.mode }}</span>
+          {% if o.location %}<span class="loc">{{ icon('pin') }}{{ o.location }}</span>{% endif %}
+        </div>
+        <p class="clamp">{{ o.description }}</p>
+        <div class="tags">{% for s in o.skills[:5] %}<span class="tag">{{ s }}</span>{% endfor %}</div>
+        <div class="offer-foot">
+          <small class="muted">via {{ o.source }} · {{ o.posted }}</small>
+          <div class="row-gap">
+            <button type="button" class="btn icon-btn save {{ 'on' if o.saved }}" data-id="{{ o.id }}" aria-label="Sauvegarder" aria-pressed="{{ 'true' if o.saved else 'false' }}">{{ icon('bookmark') }}</button>
+            <a class="btn primary sm" href="{{ o.url }}" target="_blank" rel="noopener">Postuler {{ icon('link') }}</a>
+          </div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    {% if pages > 1 %}
+    <nav class="pager">
+      {% if page_no > 1 %}<a class="btn sm" href="{{ request.url.include_query_params(page=page_no-1) }}">Précédent</a>{% endif %}
+      <span class="muted">Page {{ page_no }} / {{ pages }}</span>
+      {% if page_no < pages %}<a class="btn sm" href="{{ request.url.include_query_params(page=page_no+1) }}">Suivant</a>{% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="empty card"><h3>{{ 'Rien de sauvegardé pour le moment' if only_saved else 'Aucune offre ne correspond' }}</h3>
+      <p class="muted">{{ "Utilise l'icône marque-page sur une offre pour la retrouver ici." if only_saved else "Essaie d'enlever un filtre ou de chercher un autre mot." }}</p></div>
+    {% endif %}
+  </div>
+</form>
+{% endblock %}

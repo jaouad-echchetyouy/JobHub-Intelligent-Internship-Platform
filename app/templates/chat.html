@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "_icons.html" import icon %}
+{% block title %}Assistant carrière{% endblock %}
+{% block content %}
+<header class="page-head">
+  <div><h1>Assistant carrière</h1>
+    <p class="muted">{{ "Propulsé par Claude." if ai_on else "Mode sans clé API : réponses basées sur ton profil et les offres." }}</p></div>
+</header>
+<section class="chat-layout">
+  <aside class="card chat-side">
+    <h3>Questions rapides</h3>
+    <div class="quick">
+      <button type="button" class="chip" data-q="Quelles offres me conviennent le mieux ?">Mes meilleures offres</button>
+      <button type="button" class="chip" data-q="Quelles compétences dois-je améliorer ?">Compétences à améliorer</button>
+      <button type="button" class="chip" data-q="Y a-t-il des offres en remote ?">Offres en remote</button>
+      <button type="button" class="chip" data-q="Comment améliorer mon CV ?">Conseils pour mon CV</button>
+    </div>
+    <h3 class="mt">Ton profil</h3>
+    <div class="progress"><span style="width: {{ user.profile_completeness }}%"></span></div>
+    <small class="muted">{{ user.profile_completeness }} % complet{% if user.profile_completeness < 100 %} · <a href="/profile">compléter</a>{% endif %}</small>
+    {% if top %}
+    <h3 class="mt">Top correspondances</h3>
+    <ul class="mini">{% for t in top %}<li><span class="score sm" data-s="{{ t.score }}">{{ t.score }}%</span><span>{{ t.title }}</span></li>{% endfor %}</ul>
+    {% endif %}
+  </aside>
+  <div class="card chat">
+    <div class="msgs" id="msgs" aria-live="polite">
+      <div class="bubble bot">Bonjour {{ user.first_name }} ! Je connais ton profil et les offres du moment. Pose-moi une question ou choisis une suggestion à gauche.</div>
+    </div>
+    <form class="composer" id="composer" autocomplete="off">
+      <input class="input" id="msg" placeholder="Écris ton message…" maxlength="1000" required>
+      <button class="btn primary" type="submit" aria-label="Envoyer">{{ icon('send') }}</button>
+    </form>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="/static/js/chat.js"></script>{% endblock %}

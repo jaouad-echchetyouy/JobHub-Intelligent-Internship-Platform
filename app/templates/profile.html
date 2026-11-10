@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Mon profil{% endblock %}
+{% block content %}
+<header class="page-head"><div><h1>Mon profil</h1><p class="muted">Ces informations servent à calculer tes scores et tes alertes.</p></div></header>
+{% if welcome %}<div class="alert info">Compte créé ! Ajoute tes compétences et une courte bio pour recevoir de bonnes recommandations.</div>{% endif %}
+{% if saved %}<div class="alert ok">Profil enregistré.</div>{% endif %}
+<form method="post" action="/profile" class="card form profile-form">
+  <label>Nom complet<input class="input" name="full_name" value="{{ user.full_name }}" required></label>
+  <label>Email<input class="input" value="{{ user.email }}" disabled></label>
+  <label>Compétences <small class="muted">(séparées par des virgules)</small>
+    <input class="input" id="skills-input" name="skills" value="{{ user.skills }}" placeholder="python, sql, react"></label>
+  <div class="chips" data-target="skills-input">{% for s in suggestions[:30] %}<button type="button" class="chip">{{ s }}</button>{% endfor %}</div>
+  <label>Bio / objectifs <small class="muted">(projets, domaine visé…)</small>
+    <textarea class="input" name="bio" rows="4" maxlength="1500" placeholder="Étudiant en informatique, je cherche un stage en data science…">{{ user.bio }}</textarea></label>
+  <div class="two">
+    <label>Type d'offre souhaité
+      <select class="input" name="preferred_type">
+        {% for v, l in [('any','Peu importe'),('Internship','Stage'),('Job','Emploi'),('Hackathon','Hackathon')] %}
+        <option value="{{ v }}" {{ 'selected' if user.preferred_type == v }}>{{ l }}</option>{% endfor %}
+      </select></label>
+    <label>Mode de travail
+      <select class="input" name="preferred_mode">
+        {% for v, l in [('any','Peu importe'),('Remote','À distance'),('Hybrid','Hybride'),('On-site','Sur site')] %}
+        <option value="{{ v }}" {{ 'selected' if user.preferred_mode == v }}>{{ l }}</option>{% endfor %}
+      </select></label>
+  </div>
+  <fieldset class="notif">
+    <legend>Alertes email</legend>
+    <label class="check"><input type="checkbox" name="notify" value="on" {{ 'checked' if user.notify }}>Me prévenir des nouvelles offres adaptées</label>
+    <label>Score minimum : <b id="min-out">{{ user.min_score }}</b> %
+      <input type="range" name="min_score" min="0" max="100" step="5" value="{{ user.min_score }}" id="min-range"></label>
+  </fieldset>
+  <button class="btn primary" type="submit">Enregistrer</button>
+</form>
+{% endblock %}

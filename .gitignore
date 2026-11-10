@@ -1,0 +1,37 @@
+﻿
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environnement virtuel
+venv/
+.venv/
+env/
+
+# Variables confidentielles
+.env
+.env.*
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# Logs
+*.log
+
+# Base de données locale
+*.db
+*.sqlite
+*.sqlite3
+
+# Système
+.DS_Store
+Thumbs.db
